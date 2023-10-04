@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Simulación de Autómata de Pila</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <h1>Simulación de Autómata de Pila</h1>
+    <input type="text" id="inputString" placeholder="Ingresa una cadena">
+    <button onclick="simulate()">Simular</button>
+    <svg id="automaton" width="600" height="300"></svg>
+
+    <script>
+        const stack = [];
+        const states = ['q0', 'q1', 'q2'];
+        let currentState = 'q0';
+
+        const svg = d3.select("#automaton");
+
+        function updateDisplay(input, stack) {
+            svg.selectAll("*").remove(); // Limpia el SVG
+            svg.append("text")
+                .attr("x", 10)
+                .attr("y", 20)
+                .text("Estado Actual: " + currentState);
+            
+            svg.append("text")
+                .attr("x", 10)
+                .attr("y", 40)
+                .text("Cadena de Entrada: " + input);
+
+            svg.append("text")
+                .attr("x", 10)
+                .attr("y", 60)
+                .text("Contenido de la Pila: " + stack.join(''));
+        }
+
+        function simulate() {
+            const inputString = document.getElementById("inputString").value;
+            let index = 0;
+
+            while (index < inputString.length) {
+                const symbol = inputString[index];
+
+                if (currentState === 'q0' && symbol === 'a') {
+                    stack.push(symbol);
+                    index++;
+                } else if (currentState === 'q0' && symbol === 'c' && stack.length > 0) {
+                    stack.pop();
+                    index++;
+                } else if (currentState === 'q1' && symbol === 'b') {
+                    stack.push(symbol);
+                    index++;
+                } else if (currentState === 'q1' && symbol === 'd' && stack.length > 0) {
+                    stack.pop();
+                    index++;
+                } else if (currentState === 'q2' && symbol === 'd' && stack.length > 0) {
+                    stack.pop();
+                    index++;
+                } else {
+                    alert("Cadena no válida");
+                    return;
+                }
+
+                updateDisplay(inputString.slice(index), stack);
+
+                if (stack.length === 0) {
+                    currentState = 'q2';
+                } else {
+                    currentState = 'q1';
+                }
+            }
+
+            if (currentState === 'q2' && stack.length === 0) {
+                alert("Cadena válida");
+            } else {
+                alert("Cadena no válida");
+            }
+        }
+    </script>
+</body>
+</html>
